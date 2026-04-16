@@ -1,19 +1,24 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
 import logo from "@/assets/douglas-stratton-photography-300.png";
 
 const navLinks = [
-  { label: "Gallery", href: "#gallery" },
-  { label: "About", href: "#about" },
-  { label: "Prints", href: "#prints" },
-  { label: "Videos", href: "#videos" },
-  { label: "Contact", href: "#contact" },
+  { label: "Shop", href: "/shop" },
+  { label: "Gallery", href: "/gallery" },
+  { label: "Published Work", href: "/published-work" },
+  { label: "Blog", href: "/blog" },
+  { label: "Exhibitions", href: "/exhibitions" },
+  { label: "Portfolio", href: "/portfolio" },
 ];
 
 const Navbar = () => {
+  const location = useLocation();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  const isHome = location.pathname === "/";
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -27,11 +32,11 @@ const Navbar = () => {
       animate={{ y: 0 }}
       transition={{ duration: 0.6 }}
       className={`fixed left-0 right-0 top-0 z-50 transition-all duration-300 ${
-        scrolled ? "bg-background/90 backdrop-blur-md" : "bg-transparent"
+        scrolled || !isHome ? "bg-background/95 backdrop-blur-md border-b border-border" : "bg-transparent"
       }`}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5 md:px-12">
-        <a href="#" className="inline-flex items-center" aria-label="Douglas Stratton Home">
+        <Link to="/" className="inline-flex items-center" aria-label="Douglas Stratton Home">
           <img
             src={logo}
             alt="Douglas Stratton Photography"
@@ -39,17 +44,17 @@ const Navbar = () => {
             width={300}
             height={69}
           />
-        </a>
+        </Link>
 
         <div className="hidden items-center gap-8 md:flex">
           {navLinks.map((link) => (
-            <a
+            <Link
               key={link.label}
-              href={link.href}
-              className="font-body text-xs uppercase tracking-[0.2em] text-muted-foreground transition-colors hover:text-primary"
+              to={link.href}
+              className="font-body text-sm font-medium text-foreground/85 transition-colors hover:text-primary"
             >
               {link.label}
-            </a>
+            </Link>
           ))}
         </div>
 
@@ -66,17 +71,17 @@ const Navbar = () => {
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-background/95 px-6 pb-6 backdrop-blur-md md:hidden"
+          className="bg-background/95 px-6 pb-6 backdrop-blur-md md:hidden border-t border-border"
         >
           {navLinks.map((link) => (
-            <a
+            <Link
               key={link.label}
-              href={link.href}
+              to={link.href}
               onClick={() => setMobileOpen(false)}
-              className="block py-3 font-body text-sm uppercase tracking-[0.2em] text-muted-foreground transition-colors hover:text-primary"
+              className="block py-3 font-body text-base text-foreground/85 transition-colors hover:text-primary"
             >
               {link.label}
-            </a>
+            </Link>
           ))}
         </motion.div>
       )}

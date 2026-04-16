@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 
 const heroVideoUrl = "https://www.youtube.com/embed/lxQQ81vL2G8?autoplay=1&mute=1&controls=0&loop=1&playlist=lxQQ81vL2G8&modestbranding=1&playsinline=1&rel=0&start=20";
 
@@ -47,15 +48,18 @@ const HeroSection = () => {
         >
           Capturing the essence of light, landscape, and the human experience through the art of photography
         </motion.p>
-        <motion.a
-          href="#gallery"
+        <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 1.8 }}
-          className="mt-10 border border-primary px-8 py-3 font-body text-xs uppercase tracking-[0.3em] text-primary transition-all hover:bg-primary hover:text-primary-foreground"
         >
-          View Portfolio
-        </motion.a>
+          <Link
+            to="/portfolio"
+            className="mt-10 inline-block border border-primary px-8 py-3 font-body text-xs uppercase tracking-[0.3em] text-primary transition-all hover:bg-primary hover:text-primary-foreground"
+          >
+            View Portfolio
+          </Link>
+        </motion.div>
       </div>
 
       <motion.div

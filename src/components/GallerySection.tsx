@@ -1,52 +1,70 @@
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 
-const dayInLifeImg = "https://douglasstratton.com/wp-content/uploads/2019/11/day-in-life-tn.png";
-const chasingLightImg = "https://i.vimeocdn.com/video/565358272-12667681942476b248ebed1f130d687f5fd587ff3688861305dcb0695d312b0f-d_840?region=us";
-const piecesOfDreamsImg = "https://i.vimeocdn.com/video/743657970-14e413fa8e16ae9a92eaf0d49f8310570c68e5e8024867ac428c13b2ddc06f74-d_840?region=us";
-const heartOfTheCityImg = "https://i.vimeocdn.com/video/764606629-72c6fbe960ea679bfd6b2a9ae16b8e91c808814c5bc51bcdc5297bd43091820c-d_840?region=us";
-const rustDuneImg = "https://i.ytimg.com/vi/lxQQ81vL2G8/maxresdefault.jpg";
-
 const images = [
   {
-    src: dayInLifeImg,
-    title: "A Day in the Life",
+    src: "/oldimages/Untitled_Panorama2print-web.jpg",
+    title: "Panorama Study",
     location: "Selected Works",
     span: "md:col-span-2",
     ratio: "aspect-[16/9]",
-    href: "https://www.youtube.com/watch?v=nJapwtcRnZ8",
+    href: "/oldimages/Untitled_Panorama2print-web.jpg",
   },
   {
-    src: chasingLightImg,
-    title: "Chasing Light",
-    location: "American South West",
-    span: "",
-    ratio: "aspect-[4/5]",
-    href: "https://vimeo.com/162739040",
-  },
-  {
-    src: piecesOfDreamsImg,
-    title: "Pieces of Dreams",
+    src: "/oldimages/products-Day_Dreams_of_Bi_4f37436b28694.jpg",
+    title: "Day Dreams",
     location: "Selected Works",
     span: "",
     ratio: "aspect-[4/5]",
-    href: "https://vimeo.com/304435338",
+    href: "/oldimages/products-Day_Dreams_of_Bi_4f37436b28694.jpg",
   },
   {
-    src: heartOfTheCityImg,
-    title: "Heart of the City",
+    src: "/oldimages/products-Waves_Sandstone__52efa6eb85135.jpg",
+    title: "Waves Sandstone",
     location: "Selected Works",
     span: "",
     ratio: "aspect-[4/5]",
-    href: "https://vimeo.com/321808007",
+    href: "/oldimages/products-Waves_Sandstone__52efa6eb85135.jpg",
   },
   {
-    src: rustDuneImg,
-    title: "Rust Dune",
-    location: "Sossusvlei, Namibia",
+    src: "/oldimages/DSC04346-color-copy.jpg",
+    title: "Color Field",
+    location: "Fine Art Series",
+    span: "",
+    ratio: "aspect-[4/5]",
+    href: "/oldimages/DSC04346-color-copy.jpg",
+  },
+  {
+    src: "/oldimages/boneyard-starlights.jpg",
+    title: "Boneyard Starlights",
+    location: "Landscape Collection",
     span: "md:col-span-2",
     ratio: "aspect-[16/9]",
-    href: "https://www.youtube.com/watch?v=lxQQ81vL2G8",
+    href: "/oldimages/boneyard-starlights.jpg",
+  },
+  {
+    src: "/oldimages/products-California_Sunse_4f1c7271c842e.jpg",
+    title: "California Sunset",
+    location: "Selected Works",
+    span: "",
+    ratio: "aspect-[4/5]",
+    href: "/oldimages/products-California_Sunse_4f1c7271c842e.jpg",
+  },
+  {
+    src: "/oldimages/products-Falls_in_the_mea_4f278ea47fe76.jpg",
+    title: "Falls in the Meadow",
+    location: "Landscape Collection",
+    span: "",
+    ratio: "aspect-[4/5]",
+    href: "/oldimages/products-Falls_in_the_mea_4f278ea47fe76.jpg",
+  },
+  {
+    src: "/oldimages/products-Lost_Souls_57053e7fca245.jpg",
+    title: "Lost Souls",
+    location: "Selected Works",
+    span: "md:col-span-2",
+    ratio: "aspect-[16/9]",
+    href: "/oldimages/products-Lost_Souls_57053e7fca245.jpg",
   },
 ];
 

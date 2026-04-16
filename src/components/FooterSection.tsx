@@ -19,13 +19,18 @@ const FooterSection = () => {
           <div>
             <p className="mb-4 font-body text-xs uppercase tracking-[0.3em] text-primary">Quick Links</p>
             <div className="space-y-2">
-              {["Gallery", "About", "Prints", "Videos"].map((link) => (
+              {[
+                { label: "Gallery", href: "/gallery" },
+                { label: "About", href: "#about" },
+                { label: "Prints", href: "#prints" },
+                { label: "Videos", href: "#videos" },
+              ].map((link) => (
                 <a
-                  key={link}
-                  href={`#${link.toLowerCase()}`}
+                  key={link.label}
+                  href={link.href}
                   className="block font-body text-sm text-muted-foreground transition-colors hover:text-primary"
                 >
-                  {link}
+                  {link.label}
                 </a>
               ))}
             </div>

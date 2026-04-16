@@ -3,72 +3,24 @@ import { motion, AnimatePresence } from "framer-motion";
 import { MessageCircle, X, Send } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 
-
 type Msg = { role: "user" | "assistant"; content: string };
 
-const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`;
+function getAssistantReply(prompt: string) {
+  const text = prompt.toLowerCase();
 
-async function streamChat({
-  messages,
-  onDelta,
-  onDone,
-  onError,
-}: {
-  messages: Msg[];
-  onDelta: (text: string) => void;
-  onDone: () => void;
-  onError: (msg: string) => void;
-}) {
-  const resp = await fetch(CHAT_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-    },
-    body: JSON.stringify({ messages }),
-  });
-
-  if (resp.status === 429) {
-    onError("I'm receiving too many messages right now. Please try again in a moment.");
-    return;
-  }
-  if (resp.status === 402) {
-    onError("The AI service is temporarily unavailable. Please try again later.");
-    return;
-  }
-  if (!resp.ok || !resp.body) {
-    onError("Something went wrong. Please try again.");
-    return;
+  if (text.includes("price") || text.includes("cost") || text.includes("buy")) {
+    return "You can browse all available prints in the Shop section. Each listing includes current availability and pricing.";
   }
 
-  const reader = resp.body.getReader();
-  const decoder = new TextDecoder();
-  let buffer = "";
-
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    buffer += decoder.decode(value, { stream: true });
-
-    let idx: number;
-    while ((idx = buffer.indexOf("\n")) !== -1) {
-      let line = buffer.slice(0, idx);
-      buffer = buffer.slice(idx + 1);
-      if (line.endsWith("\r")) line = line.slice(0, -1);
-      if (!line.startsWith("data: ")) continue;
-      const json = line.slice(6).trim();
-      if (json === "[DONE]") { onDone(); return; }
-      try {
-        const parsed = JSON.parse(json);
-        const content = parsed.choices?.[0]?.delta?.content;
-        if (content) onDelta(content);
-      } catch {
-        buffer = line + "\n" + buffer;
-        break;
-      }
-    }
+  if (text.includes("commission") || text.includes("custom")) {
+    return "For custom commissions, use the Contact section and include your preferred size, style, and timeframe.";
   }
-  onDone();
+
+  if (text.includes("shipping") || text.includes("delivery")) {
+    return "Shipping details vary by print size and destination. Please use the Contact page for specific shipping timelines.";
+  }
+
+  return "Thanks for your message. You can explore Shop, Published Work, Blog, and Exhibitions for Douglas Stratton's latest work.";
 }
 
 const ChatWidget = () => {
@@ -85,33 +37,15 @@ const ChatWidget = () => {
   const send = async () => {
     if (!input.trim() || loading) return;
     const userMsg: Msg = { role: "user", content: input.trim() };
-    const allMessages = [...messages, userMsg];
-    setMessages(allMessages);
+    setMessages((prev) => [...prev, userMsg]);
     setInput("");
     setLoading(true);
 
-    let assistantSoFar = "";
-    const upsert = (chunk: string) => {
-      assistantSoFar += chunk;
-      setMessages((prev) => {
-        const last = prev[prev.length - 1];
-        if (last?.role === "assistant") {
-          return prev.map((m, i) => (i === prev.length - 1 ? { ...m, content: assistantSoFar } : m));
-        }
-        return [...prev, { role: "assistant", content: assistantSoFar }];
-      });
-    };
-
     try {
-      await streamChat({
-        messages: allMessages,
-        onDelta: upsert,
-        onDone: () => setLoading(false),
-        onError: (msg) => {
-          setMessages((prev) => [...prev, { role: "assistant", content: msg }]);
-          setLoading(false);
-        },
-      });
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      const reply = getAssistantReply(userMsg.content);
+      setMessages((prev) => [...prev, { role: "assistant", content: reply }]);
+      setLoading(false);
     } catch {
       setMessages((prev) => [...prev, { role: "assistant", content: "Sorry, something went wrong. Please try again." }]);
       setLoading(false);

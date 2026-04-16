@@ -3,16 +3,16 @@ import { useRef } from "react";
 
 const printImages = [
   {
-    src: "https://douglasstratton.com/wp-content/uploads/2019/10/living-room-fireplace-cropped.jpg",
-    alt: "Fine art print above a fireplace",
+    src: "/oldimages/1.jpg",
+    alt: "Fine art print showcased in a curated interior",
   },
   {
-    src: "https://douglasstratton.com/wp-content/uploads/2019/10/Art-in-Homes-cropped.jpg",
-    alt: "Douglas Stratton print displayed in a home interior",
+    src: "/oldimages/Whispers_5c337dee41dcf.jpg",
+    alt: "Fine art print installation detail",
   },
   {
-    src: "https://douglasstratton.com/wp-content/uploads/2019/10/art-on-display-aquaris-cropped.jpg",
-    alt: "Framed fine art photography on modern interior wall",
+    src: "/oldimages/shhh.-londonjpg1.jpg",
+    alt: "Framed fine art photography in modern space",
   },
 ];
 
