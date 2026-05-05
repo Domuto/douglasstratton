@@ -6,6 +6,7 @@ import logo from "@/assets/douglas-stratton-photography-300.png";
 
 const navLinks = [
   { label: "Shop", href: "/shop" },
+  { label: "Globe", href: "/globe" },
   { label: "Gallery", href: "/gallery" },
   { label: "Published Work", href: "/published-work" },
   { label: "Blog", href: "/blog" },
