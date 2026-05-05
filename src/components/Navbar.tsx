@@ -41,7 +41,7 @@ const Navbar = () => {
           <img
             src={logo}
             alt="Douglas Stratton Photography"
-            className="h-10 w-auto md:h-12"
+            className="h-10 w-auto brightness-0 invert md:h-12"
             width={300}
             height={69}
           />

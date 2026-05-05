@@ -97,32 +97,36 @@ const locationPoints: LocationPoint[] = [
 
 const Globe = () => {
   const [selectedId, setSelectedId] = useState(locationPoints[0].id);
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [globeSize, setGlobeSize] = useState(560);
   const globeRef = useRef<any>(null);
 
-  const selected = useMemo(
-    () => locationPoints.find((point) => point.id === selectedId) ?? locationPoints[0],
-    [selectedId],
+  const activeId = hoveredId ?? selectedId;
+
+  const activeLocation = useMemo(
+    () => locationPoints.find((point) => point.id === activeId) ?? locationPoints[0],
+    [activeId],
   );
 
   const points = useMemo(
     () =>
       locationPoints.map((point) => ({
         ...point,
-        size: selectedId === point.id ? 0.5 : 0.25,
-        color: selectedId === point.id ? "#f0c15a" : "#d6a847",
+        size: activeId === point.id ? 0.42 : 0.12,
+        color: activeId === point.id ? "#ffd97f" : "rgba(214,168,71,0.8)",
       })),
-    [selectedId],
+    [activeId],
   );
 
   const rings = useMemo(
     () =>
       locationPoints
-        .filter((point) => point.id === selectedId)
+        .filter((point) => point.id === activeId)
         .map((point) => ({
           lat: point.lat,
           lon: point.lon,
         })),
-    [selectedId],
+    [activeId],
   );
 
   useEffect(() => {
@@ -137,119 +141,156 @@ const Globe = () => {
   }, []);
 
   useEffect(() => {
+    const updateSize = () => {
+      const vw = window.innerWidth;
+      if (vw < 420) {
+        setGlobeSize(300);
+      } else if (vw < 640) {
+        setGlobeSize(340);
+      } else if (vw < 768) {
+        setGlobeSize(420);
+      } else if (vw < 1024) {
+        setGlobeSize(500);
+      } else {
+        setGlobeSize(560);
+      }
+    };
+
+    updateSize();
+    window.addEventListener("resize", updateSize);
+    return () => window.removeEventListener("resize", updateSize);
+  }, []);
+
+  useEffect(() => {
     globeRef.current?.pointOfView(
       {
-        lat: selected.lat,
-        lng: selected.lon,
-        altitude: 2.1,
+        lat: activeLocation.lat,
+        lng: activeLocation.lon,
+        altitude: 1.95,
       },
-      900,
+      850,
     );
-  }, [selected]);
+  }, [activeLocation]);
 
   return (
-    <div className="min-h-screen bg-background pt-28 pb-16 px-6 md:px-12">
+    <div className="min-h-screen overflow-hidden bg-background pt-28 pb-16 px-6 md:px-12">
       <div className="mx-auto max-w-7xl">
-        <div className="mb-10 text-center">
+        <div className="text-center">
           <p className="mb-3 font-body text-xs uppercase tracking-[0.4em] text-primary">Photo Map</p>
           <h1 className="font-display text-4xl text-foreground md:text-6xl">
             Interactive <span className="gradient-gold-text">Globe</span>
           </h1>
           <p className="mt-4 font-body text-muted-foreground">
-            Drag the real-world globe, click a highlighted location, and view photos made there.
+            Hover a location to light up a beam and pop open the work from that place.
           </p>
         </div>
 
-        <div className="grid gap-10 lg:grid-cols-[460px,1fr] lg:items-start">
-          <div className="relative overflow-hidden rounded-2xl border border-primary/25 bg-gradient-to-b from-card/70 to-card/30 p-5 shadow-2xl shadow-black/30">
-            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(214,168,71,0.18),transparent_55%)]" />
-            <div className="relative mx-auto h-[420px] w-[420px] overflow-hidden rounded-full ring-1 ring-primary/30">
+        <div className="relative mt-8 flex items-center justify-center">
+          <div
+            className="pointer-events-none absolute rounded-full bg-[radial-gradient(circle,rgba(214,168,71,0.28),transparent_62%)] blur-3xl"
+            style={{ height: globeSize + 80, width: globeSize + 80 }}
+          />
+
+          <div className="relative flex w-full max-w-[980px] flex-col items-center justify-center md:block">
+            <div
+              className="relative overflow-hidden rounded-full border border-primary/30 bg-black/25 shadow-[0_0_80px_rgba(214,168,71,0.2)] ring-1 ring-primary/25"
+              style={{ height: globeSize, width: globeSize }}
+            >
               <ReactGlobe
                 ref={globeRef}
-                width={420}
-                height={420}
+                width={globeSize}
+                height={globeSize}
                 globeImageUrl="https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
                 bumpImageUrl="https://unpkg.com/three-globe/example/img/earth-topology.png"
                 backgroundImageUrl="https://unpkg.com/three-globe/example/img/night-sky.png"
                 backgroundColor="rgba(0,0,0,0)"
                 showAtmosphere
-                atmosphereColor="#d6a847"
-                atmosphereAltitude={0.18}
+                atmosphereColor="#f0c15a"
+                atmosphereAltitude={0.22}
                 showGraticules
                 pointsData={points}
                 pointLat="lat"
                 pointLng="lon"
                 pointAltitude="size"
                 pointColor="color"
-                pointRadius={0.48}
-                pointResolution={14}
+                pointRadius={0.3}
+                pointResolution={20}
                 pointLabel={(point) => {
                   const p = point as LocationPoint;
-                  return `<div style=\"padding:6px 8px; font-size:12px\"><strong>${p.name}</strong><br/>${p.region}</div>`;
+                  return `<div style=\"padding:7px 9px; font-size:12px\"><strong>${p.name}</strong><br/>${p.region}</div>`;
                 }}
                 ringsData={rings}
                 ringLat="lat"
                 ringLng="lon"
-                ringColor={() => ["rgba(240,193,90,0.75)", "rgba(240,193,90,0.15)"]}
-                ringMaxRadius={7}
-                ringPropagationSpeed={1.5}
-                ringRepeatPeriod={900}
+                ringColor={() => ["rgba(255,217,127,0.9)", "rgba(255,217,127,0.2)"]}
+                ringMaxRadius={9}
+                ringPropagationSpeed={1.8}
+                ringRepeatPeriod={820}
+                onPointHover={(point) => {
+                  const hovered = point as LocationPoint | null;
+                  setHoveredId(hovered?.id ?? null);
+                }}
                 onPointClick={(point) => {
                   const clicked = point as LocationPoint;
                   setSelectedId(clicked.id);
                 }}
               />
             </div>
-          </div>
 
-          <div className="rounded-2xl border border-primary/20 bg-gradient-to-b from-card/65 to-card/35 p-6">
-            <p className="font-body text-xs uppercase tracking-[0.3em] text-primary">Selected Location</p>
-            <h2 className="mt-2 font-display text-3xl text-foreground">{selected.name}</h2>
-            <p className="mt-1 font-body text-sm text-muted-foreground">{selected.region}</p>
-            <p className="mt-4 font-body text-muted-foreground">{selected.description}</p>
+            <div
+              className={`mt-4 w-full max-w-sm rounded-xl border border-primary/35 bg-card/90 p-4 shadow-2xl backdrop-blur-md transition-all duration-300 md:absolute md:bottom-auto md:left-auto md:right-0 md:top-1/2 md:mt-0 md:w-[360px] md:-translate-y-1/2 ${
+                hoveredId
+                  ? "opacity-100 md:translate-x-8"
+                  : "opacity-95 md:translate-x-6"
+              }`}
+            >
+              <p className="font-body text-[10px] uppercase tracking-[0.28em] text-primary/85">Location</p>
+              <h2 className="mt-1 font-display text-2xl text-foreground">{activeLocation.name}</h2>
+              <p className="mt-1 font-body text-xs text-muted-foreground">{activeLocation.region}</p>
+              <p className="mt-3 font-body text-sm text-muted-foreground">{activeLocation.description}</p>
 
-            <div className="mt-6">
-              <p className="mb-3 font-body text-xs uppercase tracking-[0.28em] text-primary/80">Jump to location</p>
-              <div className="flex flex-wrap gap-2">
-                {locationPoints.map((point) => {
-                  const isActive = point.id === selectedId;
-                  return (
-                    <button
-                      key={point.id}
-                      type="button"
-                      onClick={() => setSelectedId(point.id)}
-                      className={`rounded-full border px-3 py-1.5 text-xs transition-colors ${
-                        isActive
-                          ? "border-primary bg-primary/20 text-foreground"
-                          : "border-primary/25 bg-background/30 text-muted-foreground hover:border-primary/50 hover:text-foreground"
-                      }`}
-                    >
-                      {point.name}
-                    </button>
-                  );
-                })}
+              <div className="mt-4 grid gap-2 sm:grid-cols-2">
+                {activeLocation.images.slice(0, 2).map((imageSrc) => (
+                  <a
+                    key={imageSrc}
+                    href={imageSrc}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group overflow-hidden rounded-md border border-primary/25"
+                  >
+                    <img
+                      src={imageSrc}
+                      alt={`${activeLocation.name} by Douglas Stratton`}
+                      className="h-28 w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      loading="lazy"
+                    />
+                  </a>
+                ))}
               </div>
             </div>
-
-            <div className="mt-6 grid gap-4 sm:grid-cols-2">
-              {selected.images.map((imageSrc) => (
-                <a
-                  key={imageSrc}
-                  href={imageSrc}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group overflow-hidden rounded-md border border-primary/20"
-                >
-                  <img
-                    src={imageSrc}
-                    alt={`${selected.name} by Douglas Stratton`}
-                    className="h-52 w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    loading="lazy"
-                  />
-                </a>
-              ))}
-            </div>
           </div>
+        </div>
+
+        <div className="mt-10 flex flex-wrap justify-center gap-2">
+          {locationPoints.map((point) => {
+            const isActive = point.id === activeId;
+            return (
+              <button
+                key={point.id}
+                type="button"
+                onMouseEnter={() => setHoveredId(point.id)}
+                onMouseLeave={() => setHoveredId(null)}
+                onClick={() => setSelectedId(point.id)}
+                className={`rounded-full border px-3 py-1.5 text-xs transition-colors ${
+                  isActive
+                    ? "border-primary bg-primary/20 text-foreground"
+                    : "border-primary/25 bg-background/30 text-muted-foreground hover:border-primary/50 hover:text-foreground"
+                }`}
+              >
+                {point.name}
+              </button>
+            );
+          })}
         </div>
       </div>
     </div>
